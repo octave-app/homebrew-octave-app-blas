@@ -1,33 +1,27 @@
+class MacTeXRequirement < Requirement
+  fatal true
+
+  satisfy(:build_env => false) {
+    Pathname.new("/Library/TeX/texbin/latex").executable?
+  }
+
+  def message; <<~EOS
+    MacTeX must be installed in order to build --with-docs.
+  EOS
+  end
+end
+
 class OctaveOpenblas < Formula
-  desc "High-level interpreted language for numerical computing"
+  desc "High-level language for numerical computing, using OpenBLAS"
   homepage "https://www.gnu.org/software/octave/index.html"
-  url "https://ftp.gnu.org/gnu/octave/octave-4.2.1.tar.gz"
-  mirror "https://ftpmirror.gnu.org/octave/octave-4.2.1.tar.gz"
-  sha256 "80c28f6398576b50faca0e602defb9598d6f7308b0903724442c2a35a605333b"
-  revision 1
+  url "ftp://ftp.gnu.org/gnu/octave/octave-4.4.1.tar.lz"
+  sha256 "1e6e3a72b4fd4b4db73ccb9f3046e4f727201c2e934b77afb04a804d7f7c4d4b"
 
   keg_only "so it can be installed alongside the default non-openblas version"
 
-  devel do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :revision => "d0221e3675ef", :using => :hg
-    version "4.3-d0221e3675ef"
-  end
-
-  head do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
-  end
-
-  # Additional dependencies for head and devel
-  if build.head? || build.devel?
-    depends_on "mercurial" => :build
-    depends_on "bison" => :build
-    depends_on "icoutils" => :build
-    depends_on "librsvg" => :build
-    depends_on "sundials-openblas@2.7"
-  end
-
-  option "with-qt", "Compile with qt-based graphical user interface"
-  option "without-test", "Skip compile-time make checks (Not Recommended)"
+  option "without-qt", "Compile without qt-based graphical user interface"
+  option "without-docs", "Skip documentation (requires MacTeX)"
+  option "with-test", "Do compile-time make checks"
 
   # Complete list of dependencies at https://wiki.octave.org/Building
   depends_on "automake" => :build
@@ -44,6 +38,7 @@ class OctaveOpenblas < Formula
   depends_on "gl2ps"
   depends_on "glpk"
   depends_on "gnuplot"
+  depends_on "gnu-tar"
   depends_on "graphicsmagick"
   depends_on "hdf5"
   depends_on "libsndfile"
@@ -55,31 +50,29 @@ class OctaveOpenblas < Formula
   depends_on "qrupdate-openblas"
   depends_on "readline"
   depends_on "suite-sparse-openblas"
-  depends_on "openblas"
+  depends_on "sundials-openblas@2.7"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
-  depends_on :java => ["1.8+", :optional]
+  depends_on "veclibfort"
+  depends_on :java => ["1.8", :recommended]
+  depends_on MacTeXRequirement if build.with?("docs")
 
   # Dependencies for the graphical user interface
   if build.with?("qt")
     depends_on "qt"
     depends_on "qscintilla2"
 
-    if build.devel?
-      # Bug #50025: "Octave window freezes when I quit Octave GUI"
-      #  https://savannah.gnu.org/bugs/?50025
-      patch do
-        url "https://savannah.gnu.org/bugs/download.php?file_id=42886"
-        sha256 "6ad49b3a569b40f17273a34fa820b8ed2161b1dedb5396976c41f221f4012b00"
-      end
-      # Fix bug #49053: retina scaling of figures
-      # see https://savannah.gnu.org/bugs/?49053
-      patch do
-        url "https://savannah.gnu.org/bugs/download.php?file_id=43077"
-        sha256 "989dc8f6c6e11590153df08c9c1ae2e7372c56cd74cd88aea6b286fe71793b35"
-      end
-    else
-      # patches require default branch <= revision d0221e3675ef
-      odie "Option '--with-qt' requires '--DEVEL'."
+    # Fix bug #49053: retina scaling of figures
+    # see https://savannah.gnu.org/bugs/?49053
+    patch do
+      url "https://savannah.gnu.org/support/download.php?file_id=44041"
+      sha256 "bf7aaa6ddc7bd7c63da24b48daa76f5bdf8ab3a2f902334da91a8d8140e39ff0"
+    end
+
+    # Fix bug #50025: Octave window freezes
+    # see https://savannah.gnu.org/bugs/?50025
+    patch do
+      url "https://savannah.gnu.org/support/download.php?file_id=45382"
+      sha256 "e179c3a0e53f6f0f4a48b5adafd18c0f9c33de276748b8049c7d1007282f7f6e"
     end
   end
 
@@ -87,53 +80,53 @@ class OctaveOpenblas < Formula
   cxxstdlib_check :skip
 
   def install
-    if build.stable?
-      # Remove for > 4.2.1
-      # Remove inline keyword on file_stat destructor which breaks macOS
-      # compilation (bug #50234).
-      # Upstream commit from 24 Feb 2017 https://hg.savannah.gnu.org/hgweb/octave/rev/a6e4157694ef
-      inreplace "liboctave/system/file-stat.cc",
-        "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
-      inreplace "scripts/java/module.mk",
-        "-source 1.3 -target 1.3", ""
-      # allow for Oracle Java (>=1.8) without requiring the old Apple Java 1.6
-      # this is more or less the same as in https://savannah.gnu.org/patch/index.php?9439
-      inreplace "libinterp/octave-value/ov-java.cc",
-       "#if ! defined (__APPLE__) && ! defined (__MACH__)", "#if 1" # treat mac's java like others
-      inreplace "configure.ac",
-       "-framework JavaVM", "" # remove framework JavaVM as it requires Java 1.6 after build
-    else
-      # do not execute a test that may trigger a dialog to install java
-      inreplace "libinterp/octave-value/ov-java.cc", "usejava (\"awt\")", "false ()"
-    end
+    # do not execute a test that may trigger a dialog to install java
+    inreplace "libinterp/octave-value/ov-java.cc", "usejava (\"awt\")", "false ()"
 
     # Default configuration passes all linker flags to mkoctfile, to be
     # inserted into every oct/mex build. This is unnecessary and can cause
     # cause linking problems.
     inreplace "src/mkoctfile.in.cc", /%OCTAVE_CONF_OCT(AVE)?_LINK_(DEPS|OPTS)%/, '""'
 
-    args = %W[
-      --prefix=#{prefix}
-      --disable-dependency-tracking
-      --disable-silent-rules
-      --enable-link-all-dependencies
-      --enable-shared
-      --disable-static
-      --disable-docs
-      --without-fltk
-      --without-osmesa
-      --with-hdf5-includedir=#{Formula["hdf5"].opt_include}
-      --with-hdf5-libdir=#{Formula["hdf5"].opt_lib}
-      --with-x=no
-      --with-blas=-L#{Formula["openblas"].opt_lib}\ -lopenblas
-      --with-portaudio
-      --with-sndfile
+    # Pick up keg-only libraries
+    ENV.append "CXXFLAGS", "-I#{Formula["sundials-openblas@2.7"].opt_include}"
+    ENV.append "CXXFLAGS", "-I#{Formula["qscintilla2"].opt_include}"
+    ENV.append "LDFLAGS", "-L#{Formula["qscintilla2"].opt_lib}"
+
+    args = [
+      "--prefix=#{prefix}",
+      "--disable-dependency-tracking",
+      "--disable-silent-rules",
+      "--enable-link-all-dependencies",
+      "--enable-shared",
+      "--disable-static",
+      "--without-fltk",
+      "--with-hdf5-includedir=#{Formula["hdf5"].opt_include}",
+      "--with-hdf5-libdir=#{Formula["hdf5"].opt_lib}",
+      "--with-x=no",
+      "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas",
+      "--with-portaudio",
+      "--with-sndfile"
     ]
 
-    args << "--without-qt" if build.without? "qt"
-    args << "--disable-java" if build.without? "java"
+    if build.without? "java"
+      args << "--disable-java"
+    end
 
-    system "./bootstrap" unless build.stable?
+    if build.without? "qt"
+      args << "--without-qt"
+    else
+      args << "--with-qt=5"
+    end
+
+    if build.without? "docs"
+      args << "--disable-docs"
+    else
+      ENV.prepend_path "PATH", "/Library/TeX/texbin/"
+    end
+
+    # fix aclocal version issue
+    system "autoreconf", "-f", "-i"
     system "./configure", *args
     system "make", "all"
 
@@ -146,7 +139,6 @@ class OctaveOpenblas < Formula
         opoo "Some tests failed. Details are given in #{opt_prefix}/make-check.log."
       end
       # install test results
-      prefix.install "test/fntests.log"
       prefix.install "test/make-check.log"
     end
 
@@ -155,6 +147,17 @@ class OctaveOpenblas < Formula
     rcfile.append_lines "makeinfo_program(\"#{Formula["texinfo"].opt_bin}/makeinfo\");"
 
     system "make", "install"
+
+    # create empty qt help to avoid error dialog of GUI
+    # if no documentation is found
+    if build.without?("docs") && build.with?("qt") && !build.stable?
+      File.open("doc/octave_interpreter.qhcp", "w") do |f|
+        f.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>")
+        f.write("<QHelpCollectionProject version=\"1.0\" />")
+      end
+      system "#{Formula["qt"].opt_bin}/qcollectiongenerator", "doc/octave_interpreter.qhcp", "-o", "doc/octave_interpreter.qhc"
+      (pkgshare/"#{version}/doc").install "doc/octave_interpreter.qhc"
+    end
   end
 
   test do
@@ -165,3 +168,5 @@ class OctaveOpenblas < Formula
     system bin/"octave", "--eval", "try; javaclasspath; catch; quit(1); end;" if build.with? "java"
   end
 end
+
+
