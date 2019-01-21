@@ -1,16 +1,18 @@
-class QrMumps < Formula
+class QrMumpsOpenblas < Formula
   desc "Parallel sparse QR factorization"
   homepage "http://buttari.perso.enseeiht.fr/qr_mumps"
   url "http://buttari.perso.enseeiht.fr/qr_mumps/releases/qr_mumps-2.0.tgz"
   sha256 "d5972d729cec04c4fcd55d7576b6a571bc321da8703953babb53126498d07fc8"
 
+  keg_only "so it can be installed alongside the default non-openblas version"
+
   option "without-test", "Skip build-time tests (not recommended)"
 
   depends_on "gcc"
-  depends_on "dpo/openblas/metis" => :recommended
+  depends_on "metis-openblas" => :recommended
   depends_on "openblas"
   depends_on "scotch@5" => :optional
-  depends_on "dpo/openblas/starpu" => :recommended
+  depends_on "starpu-openblas" => :recommended
   depends_on "pkg-config" => :build if build.with? "starpu"
 
   resource "cage" do
@@ -41,23 +43,23 @@ class QrMumps < Formula
     libs = ["-L#{Formula["openblas"].opt_lib}", "-lopenblas"]
     cfdefs = []
     if build.with? "metis"
-      libs << "-L#{Formula["metis"].opt_lib}" << "-lmetis"
+      libs << "-L#{Formula["metis-openblas"].opt_lib}" << "-lmetis"
       cfdefs << "-Dhave_metis"
-      make_args << "LMETIS=-L#{Formula["metis"].opt_lib} -lmetis"
-      make_args << "IMETIS=-I#{Formula["metis"].opt_include}"
+      make_args << "LMETIS=-L#{Formula["metis-openblas"].opt_lib} -lmetis"
+      make_args << "IMETIS=-I#{Formula["metis-openblas"].opt_include}"
     end
     if build.with? "scotch@5"
-      libs << "-L#{Formula["scotch@5"].opt_lib}" << "-lscotch" << "-lscotcherr"
+      libs << "-L#{Formula["scotch-openblas@5"].opt_lib}" << "-lscotch" << "-lscotcherr"
       cfdefs << "-Dhave_scotch"
-      make_args << "LSCOTCH=-L#{Formula["scotch@5"].opt_lib} -lscotch -lscotcherr"
-      make_args << "ISCOTCH=-I#{Formula["scotch@5"].opt_include}"
+      make_args << "LSCOTCH=-L#{Formula["scotch-openblas@5"].opt_lib} -lscotch -lscotcherr"
+      make_args << "ISCOTCH=-I#{Formula["scotch-openblas@5"].opt_include}"
     end
     if build.with? "starpu"
       ver = Formula["starpu"].version.to_f # should be 1.2
       starpulibs = `#{Formula["pkg-config"].opt_bin}/pkg-config starpu-#{ver} --libs`.strip
       libs += starpulibs.split
       make_args << "LSTARPU=#{starpulibs}"
-      make_args << "ISTARPU=-I#{Formula["starpu"].opt_include}"
+      make_args << "ISTARPU=-I#{Formula["starpu-openblas"].opt_include}"
     end
     make_args << "CDEFS=#{cfdefs.join(" ")}" << "FDEFS=#{cfdefs.join(" ")}"
 

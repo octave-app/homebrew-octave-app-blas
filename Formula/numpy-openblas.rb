@@ -1,8 +1,10 @@
-class Numpy < Formula
+class NumpyOpenblas < Formula
   desc "Package for scientific computing with Python"
   homepage "https://www.numpy.org"
   url "https://files.pythonhosted.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-1.13.1.zip"
   sha256 "c9b0283776085cb2804efff73e9955ca279ba4edafd58d3ead70b61d209c4fbb"
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   head do
     url "https://github.com/numpy/numpy.git"
@@ -16,7 +18,6 @@ class Numpy < Formula
   option "without-python", "Build without python2 support"
 
   depends_on "gcc" => :build
-  depends_on "python@2" => :recommended if MacOS.version <= :snow_leopard
   depends_on "python" => :recommended
   depends_on "openblas"
 

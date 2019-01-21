@@ -1,11 +1,13 @@
-class Superlu < Formula
+class SuperluOpenblas < Formula
   desc "Solve large, sparse nonsymmetric systems of equations"
   homepage "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/"
   url "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_5.2.1.tar.gz"
   sha256 "28fb66d6107ee66248d5cf508c79de03d0621852a0ddeba7301801d3d859f463"
 
+  keg_only "so it can be installed alongside the default non-openblas version"
+
   option "with-matlab", "Build MEX files for use with Matlab"
-  option "with-matlab-path=", "Directory that contains MATLAB bin and extern subdirectories"
+  option "with-matlab-path=", "Directory that contains Matlab bin and extern subdirectories"
 
   option "without-test", "skip build-time tests (not recommended)"
   option "with-openmp", "Enable OpenMP multithreading"

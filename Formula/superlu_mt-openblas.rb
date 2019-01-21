@@ -1,8 +1,10 @@
-class SuperluMt < Formula
+class SuperluMtOpenblas < Formula
   desc "Multithreaded solution of large, sparse nonsymmetric systems"
   homepage "http://crd-legacy.lbl.gov/~xiaoye/SuperLU"
   url "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_mt_3.0.tar.gz"
   sha256 "e5750982dc83ac62f4da31f24638aa62dbfe3ff00f9b8b786ad2eed5f9cabf56"
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   option "with-openmp", "use OpenMP instead of Pthreads interface"
 

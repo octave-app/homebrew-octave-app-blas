@@ -1,9 +1,11 @@
-class HwlocAT111 < Formula
+class HwlocOpenblasAT111 < Formula
   desc "Portable abstraction of the hierarchical topology of modern architectures"
   homepage "https://www.open-mpi.org/projects/hwloc/"
   url "https://www.open-mpi.org/software/hwloc/v1.11/downloads/hwloc-1.11.9.tar.bz2"
   sha256 "394333184248d63cb2708a976e57f05337d03bb50c33aa3097ff5c5a74a85164"
   revision 1
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   head do
     url "https://github.com/open-mpi/hwloc.git"
@@ -18,8 +20,6 @@ class HwlocAT111 < Formula
     url "https://gist.githubusercontent.com/dpo/3b421763b21b3c2120bec47a4d97ba29/raw/63c75056d8c956a8f2f80a22da73b1f2f6b7f0c8/a.rb"
     sha256 "229308e1da6ab31a8e4816602cc84d49357a07b19a582c562cb67e237c8eec42"
   end
-
-  keg_only "conflicts with hwloc 2.0"
 
   depends_on "pkg-config" => :build
   depends_on "cairo" => :optional

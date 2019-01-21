@@ -1,8 +1,10 @@
-class Qrupdate < Formula
+class QrupdateOpenblas < Formula
   desc "Fast updates of QR and Cholesky decompositions"
   homepage "https://sourceforge.net/projects/qrupdate/"
   url "https://downloads.sourceforge.net/qrupdate/qrupdate-1.1.2.tar.gz"
   sha256 "e2a1c711dc8ebc418e21195833814cb2f84b878b90a2774365f0166402308e08"
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   depends_on "gcc"
   depends_on "openblas"

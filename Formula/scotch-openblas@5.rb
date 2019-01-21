@@ -1,11 +1,11 @@
-class ScotchAT5 < Formula
+class ScotchOpenblasAT5 < Formula
   desc "Graph and mesh partitioning, clustering, and sparse matrix ordering"
   homepage "https://gforge.inria.fr/projects/scotch"
   url "https://gforge.inria.fr/frs/download.php/28978"
   version "5.1.12b"
   sha256 "82654e63398529cd3bcc8eefdd51d3b3161c0429bb11770e31f8eb0c3790db6e"
 
-  keg_only "conflicts with scotch (6.x)"
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   depends_on "open-mpi"
 

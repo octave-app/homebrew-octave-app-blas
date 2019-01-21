@@ -1,8 +1,10 @@
-class Starpu < Formula
+class StarpuOpenblas < Formula
   desc "Unified Runtime System for Heterogeneous Multicore Architectures"
   homepage "http://starpu.gforge.inria.fr/"
   url "http://starpu.gforge.inria.fr/files/starpu-1.2.3/starpu-1.2.3.tar.gz"
   sha256 "295d39da17ad17752c1cb91e0009fc9b3630bc4ac7db7e2e43433ec9024dc6db"
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   head do
     url "https://scm.gforge.inria.fr/anonscm/git/starpu/starpu.git"
@@ -15,7 +17,7 @@ class Starpu < Formula
   option "with-openmp", "Enable OpenMP multithreading"
 
   depends_on "gcc" if build.with? "openmp"
-  depends_on "dpo/openblas/hwloc@1.11"
+  depends_on "hwloc-openblas@1.11"
   depends_on "pkg-config"
 
   fails_with :clang if build.with? "openmp"

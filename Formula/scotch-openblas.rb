@@ -1,8 +1,10 @@
-class Scotch < Formula
+class ScotchOpenblas < Formula
   desc "Graph and mesh partitioning, clustering, and sparse matrix ordering"
   homepage "https://gforge.inria.fr/projects/scotch"
   url "https://gforge.inria.fr/frs/download.php/file/34618/scotch_6.0.4.tar.gz"
   sha256 "f53f4d71a8345ba15e2dd4e102a35fd83915abf50ea73e1bf6efe1bc2b4220c7"
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   option "without-test", "skip build-time tests (not recommended)"
 

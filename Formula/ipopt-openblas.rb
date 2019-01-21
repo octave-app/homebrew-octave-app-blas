@@ -1,16 +1,18 @@
-class Ipopt < Formula
+class IpoptOpenblas < Formula
   desc "Large-scale nonlinear optimization package"
   homepage "https://projects.coin-or.org/Ipopt"
   url "https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.10.tgz"
   sha256 "e1a3ad09e41edbfe41948555ece0bdc78757a5ca764b6be5a9a127af2e202d2e"
   head "https://projects.coin-or.org/svn/Ipopt/trunk", :using => :svn
 
+  keg_only "so it can be installed alongside the default non-openblas version"
+
   option "without-test", "Skip build-time tests (not recommended)"
 
   depends_on "ampl-mp"
   depends_on "gcc"
   # IPOPT is not able to use parallel MUMPS.
-  depends_on "dpo/openblas/mumps" => "without-mpi"
+  depends_on "mumps-openblas" => "without-mpi"
   depends_on "openblas"
   depends_on "pkg-config" => :build
 
@@ -19,8 +21,8 @@ class Ipopt < Formula
   def install
     mumps_libs = %w[-ldmumps -lmumps_common -lpord -lmpiseq]
     mumps_libs << "-lmetis" if Tab.for_name("mumps").with?("metis")
-    mumps_incdir = Formula["mumps"].opt_libexec/"include"
-    mumps_libcmd = "-L#{Formula["mumps"].opt_lib} " + mumps_libs.join(" ")
+    mumps_incdir = Formula["mumps-openblas"].opt_libexec/"include"
+    mumps_libcmd = "-L#{Formula["mumps-openblas"].opt_lib} " + mumps_libs.join(" ")
 
     args = ["--disable-debug",
             "--disable-dependency-tracking",

@@ -1,17 +1,18 @@
-class Scipy < Formula
+class ScipyOpenblas < Formula
   desc "Software for mathematics, science, and engineering"
   homepage "https://www.scipy.org"
   url "https://github.com/scipy/scipy/releases/download/v0.19.1/scipy-0.19.1.tar.xz"
   sha256 "0dca04c4860afdcb066cab4fd520fcffa8c85e9a7b5aa37a445308e899d728b3"
   head "https://github.com/scipy/scipy.git"
 
-  option "without-python", "Build without python2 support"
+  keg_only "so it can be installed alongside the default non-openblas version"
+
+  option "without-python", "Build without python support"
 
   depends_on "swig" => :build
   depends_on "gcc"
-  depends_on "dpo/openblas/numpy"
+  depends_on "numpy-openblas"
   depends_on "openblas"
-  depends_on "python@2" => :recommended if MacOS.version <= :snow_leopard
   depends_on "python" => :recommended
 
   cxxstdlib_check :skip
@@ -36,7 +37,7 @@ class Scipy < Formula
 
     # gfortran is gnu95
     Language::Python.each_python(build) do |python, version|
-      ENV["PYTHONPATH"] = Formula["numpy"].opt_lib/"python#{version}/site-packages"
+      ENV["PYTHONPATH"] = Formula["numpy-openblas"].opt_lib/"python#{version}/site-packages"
       ENV.prepend_create_path "PYTHONPATH", lib/"python#{version}/site-packages"
       system python, "setup.py", "build", "--fcompiler=gnu95"
       system python, *Language::Python.setup_install_args(prefix)

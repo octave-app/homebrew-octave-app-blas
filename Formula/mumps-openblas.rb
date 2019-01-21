@@ -1,21 +1,23 @@
-class Mumps < Formula
+class MumpsOpenblas < Formula
   desc "Parallel Sparse Direct Solver"
   homepage "http://mumps-solver.org"
   url "http://mumps.enseeiht.fr/MUMPS_5.1.2.tar.gz"
   sha256 "eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9"
   revision 2
 
+  keg_only "so it can be installed alongside the default non-openblas version"
+
   option "without-mpi", "build without MPI"
 
-  depends_on "dpo/openblas/scalapack" if build.with? "mpi"
+  depends_on "scalapack-openblas" if build.with? "mpi"
   depends_on "gcc"
   depends_on "open-mpi" if build.with? "mpi"
   depends_on "openblas"
 
-  depends_on "dpo/openblas/metis" => :optional if build.without? "mpi"
-  depends_on "dpo/openblas/parmetis" => :optional if build.with? "mpi"
-  depends_on "dpo/openblas/scotch" => :optional
-  depends_on "dpo/openblas/scotch@5" => :optional
+  depends_on "metis-openblas" => :optional if build.without? "mpi"
+  depends_on "parmetis-openblas" => :optional if build.with? "mpi"
+  depends_on "scotch-openblas" => :optional
+  depends_on "scotch-openblas@5" => :optional
 
   fails_with :clang # because we use OpenMP
 
@@ -41,8 +43,8 @@ class Mumps < Formula
     cp "Make.inc/" + makefile, "Makefile.inc"
 
     if build.with? "scotch@5"
-      make_args += ["SCOTCHDIR=#{Formula["scotch@5"].opt_prefix}",
-                    "ISCOTCH=-I#{Formula["scotch@5"].opt_include}"]
+      make_args += ["SCOTCHDIR=#{Formula["scotch-openblas@5"].opt_prefix}",
+                    "ISCOTCH=-I#{Formula["scotch-openblas@5"].opt_include}"]
 
       if build.with? "mpi"
         scotch_libs = "LSCOTCH=-L$(SCOTCHDIR)/lib -lptesmumps -lptscotch -lptscotcherr"
@@ -56,8 +58,8 @@ class Mumps < Formula
         orderingsf << " -Dscotch"
       end
     elsif build.with? "scotch"
-      make_args += ["SCOTCHDIR=#{Formula["scotch"].opt_prefix}",
-                    "ISCOTCH=-I#{Formula["scotch"].opt_include}"]
+      make_args += ["SCOTCHDIR=#{Formula["scotch-openblas"].opt_prefix}",
+                    "ISCOTCH=-I#{Formula["scotch-openblas"].opt_include}"]
 
       if build.with? "mpi"
         scotch_libs = "LSCOTCH=-L$(SCOTCHDIR)/lib -lptscotch -lptscotcherr -lptscotcherrexit -lscotch"
@@ -73,14 +75,14 @@ class Mumps < Formula
     end
 
     if build.with? "parmetis"
-      make_args += ["LMETISDIR=#{Formula["parmetis"].opt_lib}",
-                    "IMETIS=#{Formula["parmetis"].opt_include}",
-                    "LMETIS=-L#{Formula["parmetis"].opt_lib} -lparmetis -L#{Formula["metis"].opt_lib} -lmetis"]
+      make_args += ["LMETISDIR=#{Formula["parmetis-openblas"].opt_lib}",
+                    "IMETIS=#{Formula["parmetis-openblas"].opt_include}",
+                    "LMETIS=-L#{Formula["parmetis-openblas"].opt_lib} -lparmetis -L#{Formula["metis-openblas"].opt_lib} -lmetis"]
       orderingsf << " -Dparmetis"
     elsif build.with? "metis"
-      make_args += ["LMETISDIR=#{Formula["metis"].opt_lib}",
-                    "IMETIS=#{Formula["metis"].opt_include}",
-                    "LMETIS=-L#{Formula["metis"].opt_lib} -lmetis"]
+      make_args += ["LMETISDIR=#{Formula["metis-openblas"].opt_lib}",
+                    "IMETIS=#{Formula["metis-openblas"].opt_include}",
+                    "LMETIS=-L#{Formula["metis-openblas"].opt_lib} -lmetis"]
       orderingsf << " -Dmetis"
     end
 
@@ -90,7 +92,7 @@ class Mumps < Formula
       make_args += ["CC=mpicc -fPIC",
                     "FC=mpif90 -fPIC",
                     "FL=mpif90 -fPIC",
-                    "SCALAP=-L#{Formula["scalapack"].opt_lib} -lscalapack",
+                    "SCALAP=-L#{Formula["scalapack-openblas"].opt_lib} -lscalapack",
                     "INCPAR=", # Let MPI compilers fill in the blanks.
                     "LIBPAR=$(SCALAP)"]
     else
@@ -134,12 +136,12 @@ class Mumps < Formula
     if build.with? "mpi"
       resource("mumps_simple").stage do
         simple_args = ["CC=mpicc", "prefix=#{prefix}", "mumps_prefix=#{prefix}",
-                       "scalapack_libdir=#{Formula["scalapack"].opt_lib}"]
+                       "scalapack_libdir=#{Formula["scalapack-openblas"].opt_lib}"]
         if build.with? "scotch@5"
-          simple_args += ["scotch_libdir=#{Formula["scotch@5"].opt_lib}",
+          simple_args += ["scotch_libdir=#{Formula["scotch-openblas@5"].opt_lib}",
                           "scotch_libs=-L$(scotch_libdir) -lptesmumps -lptscotch -lptscotcherr"]
         elsif build.with? "scotch"
-          simple_args += ["scotch_libdir=#{Formula["scotch"].opt_lib}",
+          simple_args += ["scotch_libdir=#{Formula["scotch-openblas"].opt_lib}",
                           "scotch_libs=-L$(scotch_libdir) -lptscotch -lptscotcherr -lscotch"]
         end
         simple_args += ["blas_libdir=#{Formula["openblas"].opt_lib}",

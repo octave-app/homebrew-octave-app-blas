@@ -1,10 +1,12 @@
-class Octave < Formula
+class OctaveOpenblas < Formula
   desc "High-level interpreted language for numerical computing"
   homepage "https://www.gnu.org/software/octave/index.html"
   url "https://ftp.gnu.org/gnu/octave/octave-4.2.1.tar.gz"
   mirror "https://ftpmirror.gnu.org/octave/octave-4.2.1.tar.gz"
   sha256 "80c28f6398576b50faca0e602defb9598d6f7308b0903724442c2a35a605333b"
   revision 1
+
+  keg_only "so it can be installed alongside the default non-openblas version"
 
   devel do
     url "https://hg.savannah.gnu.org/hgweb/octave", :revision => "d0221e3675ef", :using => :hg
@@ -21,7 +23,7 @@ class Octave < Formula
     depends_on "bison" => :build
     depends_on "icoutils" => :build
     depends_on "librsvg" => :build
-    depends_on "dpo/openblas/sundials@2.7"
+    depends_on "sundials-openblas@2.7"
   end
 
   option "with-qt", "Compile with qt-based graphical user interface"
@@ -32,7 +34,7 @@ class Octave < Formula
   depends_on "autoconf" => :build
   depends_on "gnu-sed" => :build # https://lists.gnu.org/archive/html/octave-maintainers/2016-09/msg00193.html
   depends_on "pkg-config" => :build
-  depends_on "dpo/openblas/arpack"
+  depends_on "arpack-openblas"
   depends_on "epstool"
   depends_on "fftw"
   depends_on "fig2dev"
@@ -50,9 +52,9 @@ class Octave < Formula
   depends_on "portaudio"
   depends_on "pstoedit"
   depends_on "qhull"
-  depends_on "dpo/openblas/qrupdate"
+  depends_on "qrupdate-openblas"
   depends_on "readline"
-  depends_on "dpo/openblas/suite-sparse"
+  depends_on "suite-sparse-openblas"
   depends_on "openblas"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
   depends_on :java => ["1.8+", :optional]
