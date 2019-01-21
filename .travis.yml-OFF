@@ -1,0 +1,63 @@
+language: ruby
+
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - build-essential
+      - curl
+      - git
+      - file
+      - python-setuptools
+      - m4
+      - texinfo
+      - libbz2-dev
+      - libcurl4-openssl-dev
+      - libexpat-dev
+      - libncurses-dev
+      - zlib1g-dev
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode9.4
+      rvm: system
+    - os: osx
+      osx_image: xcode10
+      rvm: system
+    - os: osx
+      osx_image: xcode10.1
+      rvm: system
+    - os: linux
+      dist: xenial
+      rvm: 2.3
+    - os: linux
+      dist: trusty
+
+branches:
+  only:
+    - master
+
+install:
+  - unset DYLD_LIBRARY_PATH
+  - if [ `uname` = "Linux" ]; then bash ci/setup_travis_linux.sh; fi
+  - if [ `uname` = "Linux" ]; then export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"; fi
+  - export HOMEBREW_DEVELOPER=1
+  - export HOMEBREW_NO_AUTO_UPDATE=1
+  - export HOMEBREW_FORCE_VENDOR_RUBY=1
+  - export HOMEBREW_VERBOSE=1
+  - export HOMEBREW_VERBOSE_USING_DOTS=1
+  - if [ `uname` = "Linux" ]; then brew update; brew install pkg-config; fi
+  - mkdir -p $(brew --repo)/Library/Taps/octave-app
+  - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/octave-app/homebrew-octave-app-openblas
+  - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/octave-app/homebrew-octave-app-openblas"
+  - chmod 0644 $(brew --repo)/Library/Taps/octave-app/homebrew-octave-app-openblas/Formula/*.rb
+  - umask 022
+  - brew tap --repair
+  - brew update
+  - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
+  - brew tap-pin octave-app/octave-app-openblas
+
+script:
+  - brew test-bot --tap=octave-app/octave-app-openblas
