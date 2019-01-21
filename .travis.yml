@@ -2,14 +2,7 @@ language: ruby
 
 sudo: required
 
-notifications:
-  webhooks: https://www.travisbuddy.com/
-  on_success: never
-
 addons:
-  homebrew:
-    casks:
-      - mactex
   apt:
     packages:
       - build-essential
@@ -24,8 +17,6 @@ addons:
       - libexpat-dev
       - libncurses-dev
       - zlib1g-dev
-      - qttools5-dev-tools
-      - qt5-default
 
 matrix:
   include:
