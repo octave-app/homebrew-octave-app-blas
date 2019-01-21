@@ -43,25 +43,23 @@ class OctaveOpenblasAT42 < Formula
   cxxstdlib_check :skip
 
   def install
-    if build.stable?
-      # Remove for > 4.2.1
-      # Remove inline keyword on file_stat destructor which breaks macOS
-      # compilation (bug #50234).
-      # Upstream commit from 24 Feb 2017 https://hg.savannah.gnu.org/hgweb/octave/rev/a6e4157694ef
-      inreplace "liboctave/system/file-stat.cc",
-        "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
-      inreplace "scripts/java/module.mk",
-        "-source 1.3 -target 1.3", ""
-      # allow for Oracle Java (>=1.8) without requiring the old Apple Java 1.6
-      # this is more or less the same as in https://savannah.gnu.org/patch/index.php?9439
-      inreplace "libinterp/octave-value/ov-java.cc",
-       "#if ! defined (__APPLE__) && ! defined (__MACH__)", "#if 1" # treat mac's java like others
-      inreplace "configure.ac",
-       "-framework JavaVM", "" # remove framework JavaVM as it requires Java 1.6 after build
-    else
-      # do not execute a test that may trigger a dialog to install java
-      inreplace "libinterp/octave-value/ov-java.cc", "usejava (\"awt\")", "false ()"
-    end
+    # Hack: munge HG-ID to reflect that we're adding patches
+    hg_id = `cat HG-ID`.chomp;
+    Pathname.new("HG-ID").write "#{hg_id} + patches\n"
+
+    # Remove inline keyword on file_stat destructor which breaks macOS
+    # compilation (bug #50234).
+    # Upstream commit from 24 Feb 2017 https://hg.savannah.gnu.org/hgweb/octave/rev/a6e4157694ef
+    inreplace "liboctave/system/file-stat.cc",
+      "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
+    inreplace "scripts/java/module.mk",
+      "-source 1.3 -target 1.3", ""
+    # allow for Oracle Java (>=1.8) without requiring the old Apple Java 1.6
+    # this is more or less the same as in https://savannah.gnu.org/patch/index.php?9439
+    inreplace "libinterp/octave-value/ov-java.cc",
+     "#if ! defined (__APPLE__) && ! defined (__MACH__)", "#if 1" # treat mac's java like others
+    inreplace "configure.ac",
+     "-framework JavaVM", "" # remove framework JavaVM as it requires Java 1.6 after build
 
     # Default configuration passes all linker flags to mkoctfile, to be
     # inserted into every oct/mex build. This is unnecessary and can cause
