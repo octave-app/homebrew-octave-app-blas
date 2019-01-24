@@ -28,6 +28,7 @@ class OctaveOpenblasAT42 < Formula
   depends_on "hdf5"
   depends_on "libsndfile"
   depends_on "libtool"
+  depends_on "openblas"
   depends_on "pcre"
   depends_on "portaudio"
   depends_on "pstoedit"
@@ -35,7 +36,6 @@ class OctaveOpenblasAT42 < Formula
   depends_on "qrupdate-openblas"
   depends_on "readline"
   depends_on "suite-sparse-openblas"
-  depends_on "openblas"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
   depends_on :java => ["1.8+", :recommended]
 
