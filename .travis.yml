@@ -17,6 +17,9 @@ addons:
       - libexpat-dev
       - libncurses-dev
       - zlib1g-dev
+  homebrew:
+    casks:
+      - java
 
 env:
   global:
