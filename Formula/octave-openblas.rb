@@ -1,3 +1,5 @@
+# Octave, built against OpenBLAS instead of Apple's vecLib
+
 class MacTeXRequirement < Requirement
   fatal true
 
@@ -52,7 +54,7 @@ class OctaveOpenblas < Formula
   depends_on "suite-sparse-openblas"
   depends_on "sundials-openblas@2.7"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
-  depends_on "veclibfort"
+  depends_on "veclibfort" # Can this be removed? -apjanke
   depends_on :java => ["1.8", :recommended]
   depends_on MacTeXRequirement if build.with?("docs")
 
