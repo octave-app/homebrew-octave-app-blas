@@ -22,6 +22,8 @@ BLAS is an API specification for a linear algebra library. There are multiple im
 
 Apple Accelerate/vecLib is provided by macOS. Homebrew core supplies an [OpenBLAS formula](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openblas.rb). This tap provides formulae for ATLAS (`atlas`) and the BLAS Reference Implementation (`blas-ri`).
 
+The Intel MKL isn't Free Software, but it _is_ free as in beer! You can [download it, use it, and redistributed it without charge](https://software.intel.com/en-us/mkl/license-faq).
+
 In theory, software built against the BLAS API can swap out its implementation libraries at run time. This would be accomplished on macOS with the `DYLD_LIBRARY_PATH` and/or `DYLD_INSERT_LIBRARIES` environment variables if it's not directly supported by the software. (I haven't tried this yet, though.)
 
 # How to use this tap
