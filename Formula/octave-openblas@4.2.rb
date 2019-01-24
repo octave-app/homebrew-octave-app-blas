@@ -45,6 +45,7 @@ class OctaveOpenblasAT42 < Formula
   def install
     # Hack: munge HG-ID to reflect that we're adding patches
     hg_id = `cat HG-ID`.chomp;
+    File.delete("HG-ID");
     Pathname.new("HG-ID").write "#{hg_id} + patches\n"
 
     # Remove inline keyword on file_stat destructor which breaks macOS
