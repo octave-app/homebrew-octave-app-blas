@@ -6,10 +6,12 @@ class Blis < Formula
   head "https://github.com/flame/blis.git"
 
   def install
-    # If we create bottles, "auto" will need to be replaced by e.g. "haswell"
+    arch = build.bottle? ? "penryn" : "auto"
     system "./configure", "--prefix=#{prefix}",
-                          "auto"
-    system "make", "V=1", "BLIS_ENABLE_DYNAMIC_BUILD=yes"
+                          "--enable-shared",
+                          "--enable-cblas",
+                          arch
+    system "make", "V=1"
     system "make", "check"
     system "make", "install"
   end

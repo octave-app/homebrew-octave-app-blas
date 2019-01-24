@@ -19,7 +19,7 @@ addons:
       - zlib1g-dev
   homebrew:
     casks:
-      - java
+      - java8
 
 env:
   global:
@@ -67,7 +67,7 @@ install:
   - brew update
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
-  - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas
+  - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas --without-docs
   - export HOMEBREW_VERBOSE=1
   - export HOMEBREW_VERBOSE_USING_DOTS=1
 
