@@ -56,8 +56,6 @@ install:
   - export HOMEBREW_DEVELOPER=1
   - export HOMEBREW_NO_AUTO_UPDATE=1
   - export HOMEBREW_FORCE_VENDOR_RUBY=1
-  - export HOMEBREW_VERBOSE=1
-  - export HOMEBREW_VERBOSE_USING_DOTS=1
   - if [ `uname` = "Linux" ]; then brew update; brew install pkg-config; fi
   # Slide this source checkout in to place as a tap
   - mkdir -p $(brew --repo)/Library/Taps/octave-app
@@ -69,13 +67,17 @@ install:
   - brew update
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
+  - brew install --only-dependencies octave-openblas octave-openblas@42 r-openblas blas-ri atlas
+  - export HOMEBREW_VERBOSE=1
+  - export HOMEBREW_VERBOSE_USING_DOTS=1
 
 script:
-  - brew install octave-openblas
+  # Build Octaves without docs to avoid heavy MacTeX instll
+  - brew install octave-openblas --without-docs
   - brew test octave-openblas
-  - brew install octave-openblas@4.2
+  - brew install octave-openblas@4.2 --without-docs
   - brew test octave-openblas@4.2
-  - brew install octave-stable-openblas
+  - brew install octave-stable-openblas --without-docs
   - brew test octave-stable-openblas
   - brew install r-openblas
   - brew test r-openblas
