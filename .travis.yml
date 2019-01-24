@@ -67,7 +67,7 @@ install:
   - brew update
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
-  - brew install --only-dependencies octave-openblas octave-openblas@42 r-openblas blas-ri atlas
+  - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas
   - export HOMEBREW_VERBOSE=1
   - export HOMEBREW_VERBOSE_USING_DOTS=1
 
