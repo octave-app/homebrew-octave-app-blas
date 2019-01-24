@@ -1,5 +1,5 @@
 # "stable" (prerelease development branch) version of Octave, built against
-# OpenBLAS instead of Apple Accelerate.
+# OpenBLAS instead of Apple vecLib.
 
 class MacTeXRequirement < Requirement
   fatal true
@@ -102,7 +102,7 @@ class OctaveStableOpenblas < Formula
     inreplace "src/mkoctfile.in.cc", /%OCTAVE_CONF_OCT(AVE)?_LINK_(DEPS|OPTS)%/, '""'
 
     # Pick up non-linked libraries
-    ENV.append "CXXFLAGS", "-I#{Formula["sundials27-openblas@2.7"].opt_include}"
+    ENV.append "CXXFLAGS", "-I#{Formula["sundials-openblas@2.7"].opt_include}"
     ENV.append "CXXFLAGS", "-I#{Formula["qscintilla2"].opt_include}"
     ENV.append "LDFLAGS", "-L#{Formula["qscintilla2"].opt_lib}"
 
