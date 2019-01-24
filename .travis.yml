@@ -20,8 +20,8 @@ addons:
 
 env:
   global:
-    - TAP=octave-app/octave-app-openblas
-    - TAP_REPO=octave-app/homebrew-octave-app-openblas
+    - TAP=octave-app/octave-app-blas
+    - TAP_REPO=octave-app/homebrew-octave-app-blas
 
 matrix:
   include:
@@ -75,4 +75,9 @@ script:
   - brew install octave-stable-openblas
   - brew test octave-stable-openblas
   - brew install r-openblas
-  # - brew test-bot --tap=octave-app/octave-app-openblas
+  - brew test r-openblas
+  - brew install blas-ri
+  - brew test blas-ri
+  - brew install atlas
+  - brew test atlas
+  # - brew test-bot --tap=$TAP
