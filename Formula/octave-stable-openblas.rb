@@ -52,6 +52,7 @@ class OctaveStableOpenblas < Formula
   depends_on "hdf5"
   depends_on "libsndfile"
   depends_on "libtool"
+  depends_on "openblas"
   depends_on "pcre"
   depends_on "portaudio"
   depends_on "pstoedit"
@@ -61,7 +62,6 @@ class OctaveStableOpenblas < Formula
   depends_on "suite-sparse-openblas"
   depends_on "sundials-openblas@2.7"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
-  depends_on "veclibfort" # Can this be removed? -apjanke
   depends_on :java => ["1.8", :recommended]
   depends_on MacTeXRequirement if build.with?("docs")
 
