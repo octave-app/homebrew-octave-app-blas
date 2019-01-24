@@ -37,6 +37,10 @@ branches:
     - master
 
 install:
+  # Diagnostics
+  - echo PATH=$PATH
+  - echo original DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH
+  # Actual build
   - unset DYLD_LIBRARY_PATH
   - if [ `uname` = "Linux" ]; then bash ci/setup_travis_linux.sh; fi
   - if [ `uname` = "Linux" ]; then export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"; fi
@@ -46,6 +50,7 @@ install:
   - export HOMEBREW_VERBOSE=1
   - export HOMEBREW_VERBOSE_USING_DOTS=1
   - if [ `uname` = "Linux" ]; then brew update; brew install pkg-config; fi
+  # Slide this source checkout in to place as a tap
   - mkdir -p $(brew --repo)/Library/Taps/octave-app
   - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/octave-app/homebrew-octave-app-openblas
   - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/octave-app/homebrew-octave-app-openblas"
@@ -58,6 +63,10 @@ install:
 
 script:
   - brew install octave-openblas
+  - brew test octave-openblas
   - brew install octave-openblas@4.2
+  - brew test octave-openblas@4.2
+  - brew install octave-stable-openblas
+  - brew test octave-stable-openblas
   - brew install r-openblas
   # - brew test-bot --tap=octave-app/octave-app-openblas
