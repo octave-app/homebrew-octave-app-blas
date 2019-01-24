@@ -85,4 +85,6 @@ script:
   - brew test blas-ri
   - brew install atlas
   - brew test atlas
+  - brew install blis
+  - brew test blis
   # - brew test-bot --tap=$TAP
