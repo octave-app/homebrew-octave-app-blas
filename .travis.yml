@@ -66,7 +66,7 @@ install:
   - chmod 0644 $(brew --repo)/Library/Taps/$TAP_REPO/Formula/*.rb
   - umask 022
   - brew tap --repair
-  - brew update
+  #- brew update
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
   - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas --without-docs --verbose
