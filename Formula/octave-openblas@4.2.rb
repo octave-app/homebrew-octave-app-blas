@@ -1,3 +1,19 @@
+# Octave 4.2, built against OpenBLAS instead of Apple's vecLib
+
+class MacTeXRequirement < Requirement
+  fatal true
+
+  satisfy(:build_env => false) {
+    Pathname.new("/Library/TeX/texbin/latex").executable?
+  }
+
+  def message; <<~EOS
+    MacTeX must be installed in order to build --with-docs.
+  EOS
+  end
+end
+
+
 class OctaveOpenblasAT42 < Formula
   desc "High-level interpreted language for numerical computing"
   homepage "https://www.gnu.org/software/octave/index.html"
@@ -7,6 +23,7 @@ class OctaveOpenblasAT42 < Formula
 
   keg_only "so it can be installed alongside the default non-openblas version"
 
+  option "without-docs", "Skip documentation (requires MacTeX)"
   option "without-test", "Skip compile-time make checks (Not Recommended)"
 
   # Complete list of dependencies at https://wiki.octave.org/Building
@@ -38,6 +55,7 @@ class OctaveOpenblasAT42 < Formula
   depends_on "suite-sparse-openblas"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
   depends_on :java => ["1.8+", :recommended]
+  depends_on MacTeXRequirement if build.with?("docs")
 
   # Dependencies use Fortran, leading to spurious messages about GCC
   cxxstdlib_check :skip
@@ -74,7 +92,6 @@ class OctaveOpenblasAT42 < Formula
       --enable-link-all-dependencies
       --enable-shared
       --disable-static
-      --disable-docs
       --without-fltk
       --without-osmesa
       --with-hdf5-includedir=#{Formula["hdf5"].opt_include}
@@ -88,7 +105,14 @@ class OctaveOpenblasAT42 < Formula
 
     args << "--disable-java" if build.without? "java"
 
-    system "./bootstrap" unless build.stable?
+    if build.without? "docs"
+      args << "--disable-docs"
+    else
+      ENV.prepend_path "PATH", "/Library/TeX/texbin/"
+    end
+
+    # fix aclocal version issue
+    system "autoreconf", "-f", "-i"
     system "./configure", *args
     system "make", "all"
 
