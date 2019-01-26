@@ -77,12 +77,12 @@ script:
   # Build Octaves without docs to avoid heavy MacTeX instll
   - brew install octave-openblas --without-docs --verbose
   - brew test octave-openblas
-  - brew install octave-openblas@4.2 --without-docs --verbose
-  - brew test octave-openblas@4.2
-  - brew install octave-stable-openblas --without-docs --verbose
-  - brew test octave-stable-openblas
-  - brew install r-openblas --verbose
-  - brew test r-openblas
+  #- brew install octave-openblas@4.2 --without-docs --verbose
+  #- brew test octave-openblas@4.2
+  #- brew install octave-stable-openblas --without-docs --verbose
+  #- brew test octave-stable-openblas
+  #- brew install r-openblas --verbose
+  #- brew test r-openblas
   - brew install blas-ri --verbose
   - brew test blas-ri
   - brew install atlas --verbose
