@@ -18,6 +18,8 @@ addons:
       - libncurses-dev
       - zlib1g-dev
   homebrew:
+    taps:
+      - homebrew/cask-versions
     casks:
       - java8
 
