@@ -69,24 +69,24 @@ install:
   - brew update
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
-  - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas --without-docs
+  - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas --without-docs --verbose
   - export HOMEBREW_VERBOSE=1
   - export HOMEBREW_VERBOSE_USING_DOTS=1
 
 script:
   # Build Octaves without docs to avoid heavy MacTeX instll
-  - brew install octave-openblas --without-docs
+  - brew install octave-openblas --without-docs --verbose
   - brew test octave-openblas
-  - brew install octave-openblas@4.2 --without-docs
+  - brew install octave-openblas@4.2 --without-docs --verbose
   - brew test octave-openblas@4.2
-  - brew install octave-stable-openblas --without-docs
+  - brew install octave-stable-openblas --without-docs --verbose
   - brew test octave-stable-openblas
-  - brew install r-openblas
+  - brew install r-openblas --verbose
   - brew test r-openblas
-  - brew install blas-ri
+  - brew install blas-ri --verbose
   - brew test blas-ri
-  - brew install atlas
+  - brew install atlas --verbose
   - brew test atlas
-  - brew install blis
+  - brew install blis --verbose
   - brew test blis
   # - brew test-bot --tap=$TAP
