@@ -27,6 +27,7 @@ env:
   global:
     - TAP=octave-app/octave-app-blas
     - TAP_REPO=octave-app/homebrew-octave-app-blas
+    - OCT_VARIANT=openblas
 
 matrix:
   include:
@@ -34,13 +35,18 @@ matrix:
       osx_image: xcode10.1
       rvm: system
     - os: osx
-      osx_image: xcode10
+      osx_image: xcode10.1
       rvm: system
+      env:
+        - OCT_VARIANT=openblas@4.2
+    - os: osx
+      osx_image: xcode10.1
+      rvm: system
+      env:
+        - OCT_VARIANT=stable-openblas
     - os: linux
       dist: xenial
       rvm: 2.3
-    - os: linux
-      dist: trusty
 
 branches:
   only:
@@ -51,6 +57,7 @@ install:
   - echo PATH=$PATH
   - echo original DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH
   # Actual build
+  # I don't know why we're fussing with DYLD_LIBRARY_PATH - apj
   - unset DYLD_LIBRARY_PATH
   - echo new DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH
   - if [ `uname` = "Linux" ]; then bash ci/setup_travis_linux.sh; fi
@@ -70,17 +77,15 @@ install:
   - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin $TAP
   - brew install --only-dependencies octave-openblas octave-openblas@4.2 r-openblas blas-ri atlas --without-docs
-  - export HOMEBREW_VERBOSE=1
+  #- export HOMEBREW_VERBOSE=1
   - export HOMEBREW_VERBOSE_USING_DOTS=1
 
 script:
-  # Build Octaves without docs to avoid heavy MacTeX instll
-  - brew install octave-openblas --without-docs
-  - brew test octave-openblas
-  - brew install octave-openblas@4.2 --without-docs
-  - brew test octave-openblas@4.2
-  - brew install octave-stable-openblas --without-docs
-  - brew test octave-stable-openblas
+  # Build Octaves without docs to avoid heavy MacTeX install
+  # Build variants in separate jobs to avoid timeouts
+  - travis_wait 30 brew install octave-${OCT_VARIANT} --without-docs
+  - brew test octave-${OCT_VARIANT}
+  # And let's try some other formulae too
   - brew install r-openblas
   - brew test r-openblas
   - brew install blas-ri
