@@ -83,7 +83,7 @@ install:
 script:
   # Build Octaves without docs to avoid heavy MacTeX install
   # Build variants in separate jobs to avoid timeouts
-  - travis_wait 30 brew install octave-${OCT_VARIANT} --without-docs
+  - travis_wait 50 brew install octave-${OCT_VARIANT} --without-docs
   - brew test octave-${OCT_VARIANT}
   # And let's try some other formulae too
   - brew install r-openblas
