@@ -28,8 +28,11 @@ In theory, software built against the BLAS API can swap out its implementation l
 
 # How to use this tap
 
+This tap depends on formulae in octave-app/octave-app-bases, so you need to tap them both.
+
 ```
 brew tap octave-app/octave-app-blas
+brew tap octave-app/octave-app-bases
 brew install octave-openblas
 brew install blas-ri atlas
 ```
