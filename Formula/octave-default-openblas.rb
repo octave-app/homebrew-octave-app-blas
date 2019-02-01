@@ -182,6 +182,10 @@ class OctaveDefaultOpenblas < Formula
     end
   end
 
+  def post_install
+    system "ln", "-sf", "#{bin}/octave", "#{HOMEBREW_PREFIX}/bin/octave-default-openblas"
+  end
+
   test do
     system bin/"octave", "--eval", "(22/7 - pi)/pi"
     # This is supposed to crash octave if there is a problem with veclibfort
