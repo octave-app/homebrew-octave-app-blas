@@ -103,7 +103,7 @@ class OctaveDefaultOpenblas < Formula
     inreplace "src/mkoctfile.in.cc", /%OCTAVE_CONF_OCT(AVE)?_LINK_(DEPS|OPTS)%/, '""'
 
     # Pick up keg-only libraries
-    ENV.append "CXXFLAGS", "-I#{Formula["sundials27-octave-app"].opt_include}"
+    ENV.append "CXXFLAGS", "-I#{Formula["sundials-openblas@2.7"].opt_include}"
     ENV.append "CXXFLAGS", "-I#{Formula["qscintilla2"].opt_include}"
     ENV.append "LDFLAGS", "-L#{Formula["qscintilla2"].opt_lib}"
 
