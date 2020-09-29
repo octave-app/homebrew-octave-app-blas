@@ -4,11 +4,6 @@ class Atlas < Formula
   url "https://sourceforge.net/projects/math-atlas/files/Stable/3.10.3/atlas3.10.3.tar.bz2"
   sha256 "2688eb733a6c5f78a18ef32144039adcd62fabce66f2eb51dd59dde806a6d2b7"
 
-  devel do
-    url "https://sourceforge.net/projects/math-atlas/files/Developer%20%28unstable%29/3.11.41/atlas3.11.41.tar.bz2"
-    sha256 "477d567a8d683e891d786e9e8bb6ad6659daa9ba18e8dd0e2f70b7a54095f8de"
-  end
-
   keg_only :provided_by_macos,
            "macOS provides BLAS and LAPACK in the Accelerate framework"  
 
